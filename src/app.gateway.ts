@@ -13,14 +13,12 @@ export class AppGateway {
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage('sendOnSiteNotification')
+  @SubscribeMessage('adminmodule')
   async eventOnsiteNotification(@MessageBody() data: any): Promise<WsResponse> {
     console.log(data);
     const message: WsResponse = {
-      event: 'sendOnSiteNotification',
-      data: {
-        a: 1,
-      },
+      data,
+      event: 'get-player-card',
     };
 
     return message;
