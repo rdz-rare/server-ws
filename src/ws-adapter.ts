@@ -1,7 +1,11 @@
 import { INestApplicationContext, Logger } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { AbstractWsAdapter } from '@nestjs/websockets';
-import { CLOSE_EVENT, CONNECTION_EVENT, ERROR_EVENT } from '@nestjs/websockets/constants';
+import {
+  CLOSE_EVENT,
+  CONNECTION_EVENT,
+  ERROR_EVENT,
+} from '@nestjs/websockets/constants';
 import { MessageMappingProperties } from '@nestjs/websockets/gateway-metadata-explorer';
 import { EMPTY as empty, fromEvent, Observable } from 'rxjs';
 import { filter, first, mergeMap, share, takeUntil } from 'rxjs/operators';
@@ -23,7 +27,10 @@ export class WsAdapter extends AbstractWsAdapter {
     wsPackage = loadPackage('ws', 'WsAdapter', () => require('ws'));
   }
 
-  public create(port: number, options?: any & { namespace?: string; server?: any }): any {
+  public create(
+    port: number,
+    options?: any & { namespace?: string; server?: any },
+  ): any {
     const { server, ...wsOptions } = options;
     if (port === 0 && this.httpServer) {
       return this.bindErrorHandler(
@@ -50,9 +57,9 @@ export class WsAdapter extends AbstractWsAdapter {
   ) {
     const close$ = fromEvent(client, CLOSE_EVENT).pipe(share(), first());
     const source$ = fromEvent(client, 'message').pipe(
-      mergeMap(data =>
+      mergeMap((data) =>
         this.bindMessageHandler(data, handlers, transform, client).pipe(
-          filter(result => result),
+          filter((result) => result),
         ),
       ),
       takeUntil(close$),
@@ -80,7 +87,9 @@ export class WsAdapter extends AbstractWsAdapter {
   ): Observable<any> {
     try {
       const message = JSON.parse(buffer.data);
-      const messageHandler = handlers.find(handler => handler.message === message.path);
+      const messageHandler = handlers.find(
+        (handler) => handler.message === message.path,
+      );
       client['req'] = JSON.parse(buffer.data);
       client['meta'] = message.meta;
 
@@ -93,7 +102,7 @@ export class WsAdapter extends AbstractWsAdapter {
   }
 
   public bindErrorHandler(server: any) {
-    server.on(CONNECTION_EVENT, ws =>
+    server.on(CONNECTION_EVENT, (ws) =>
       ws.on(ERROR_EVENT, (err: any) => this.logger.error(err)),
     );
     server.on(ERROR_EVENT, (err: any) => this.logger.error(err));
