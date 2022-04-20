@@ -8,7 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'ws';
 
-@WebSocketGateway(9090)
+@WebSocketGateway(Number(process.env.PORT))
 export class AppGateway {
   @WebSocketServer()
   server: Server;
